@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>School Database</title>
+  <style>
+    :root {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --primary-color: #3498db;
+    }
+    [data-theme="dark"] {
+      --bg-color: #1e1e1e;
+      --card-bg: #2c2c2c;
+      --text-color: #f5f5f5;
+      --primary-color: #3498db;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg-color);
+      margin: 0;
+      padding: 2rem;
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
+    }
+    h1 {
+      text-align: center;
+      color: var(--text-color);
+      transition: color 0.3s;
+    }
+    .grade-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .grade-section h2 {
+      margin-top: 0;
+      color: #2980b9;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 0.5rem;
+    }
+    .student {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      background: var(--bg-color);
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .student div {
+      font-size: 0.95rem;
+    }
+    .student div span {
+      font-weight: bold;
+    }
+    .student {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .student:hover {
+    transform: scale(1.02);
+    opacity: 0.95;
+  }
+  .grade-section {
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+<script>
+    function searchStudents() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const students = document.querySelectorAll('.student');
+      students.forEach(student => {
+        const text = student.innerText.toLowerCase();
+        student.style.display = text.includes(query) ? 'grid' : 'none';
+      });
+    }
+    function filterByGrade() {
+    const selected = document.getElementById('gradeFilter').value;
+    document.querySelectorAll('.grade-section').forEach(section => {
+      if (selected === 'all' || section.querySelector('h2').textContent.includes(selected)) {
+        section.style.display = 'block';
+      } else {
+        section.style.display = 'none';
+      }
+    });
+  }
+  function toggleTheme() {
+    const html = document.documentElement;
+    html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.getElementById('themeToggle').textContent = html.dataset.theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+  }
+  function addStudent(event) {
+    event.preventDefault();
+    const name = document.getElementById('newName').value;
+    const email = document.getElementById('newEmail').value;
+    const id = document.getElementById('newID').value;
+    const birthdate = document.getElementById('newBirthdate').value;
+    const grade = document.getElementById('newGrade').value;
+
+    const section = [...document.querySelectorAll('.grade-section')].find(s => s.querySelector('h2').textContent === grade);
+    if (!section) return;
+
+    const container = document.createElement('div');
+    container.className = 'student';
+    container.innerHTML = `\$1
+  <button onclick="removeStudent(this)" style="grid-column: span 2; background: crimson; color: white; border: none; padding: 0.4rem 0.6rem; border-radius: 6px; cursor: pointer;">Remove</button>`;
+
+    section.appendChild(container);
+    document.getElementById('addStudentForm').reset();
+  }
+function removeStudent(button) {
+  const studentCard = button.closest('.student');
+  if (studentCard && confirm('Are you sure you want to remove this student?')) {
+    studentCard.remove();
+  }
+}
+</script>
+</head>
+<body data-theme="light">
+  <div style="position: absolute; top: 1rem; right: 1rem;">
+    <a href="https://webappsca.pcrsoft.com/Clue/Staff-Portal-Login/50778?returnUrl=https%3a%2f%2fwebappsca.pcrsoft.com%2fClue%2fStaff-Home%2f50812" target="_blank" style="background: var(--primary-color); color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-weight: bold;">Staff Portal</a>
+  </div>
+  <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+    <button id="themeToggle" onclick="toggleTheme()" style="padding: 0.5rem 1rem; border: none; border-radius: 8px; background: var(--primary-color); color: white; font-size: 1rem; cursor: pointer;">🌙 Dark Mode</button>
+  </div>
+  <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; align-items: center; margin-bottom: 2rem;">
+    <select id="gradeFilter" onchange="filterByGrade()" style="padding: 0.6rem 1rem; font-size: 1rem; border-radius: 10px; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+      <option value="all">All Grades</option>
+      <option value="6th">6th Grade</option>
+      <option value="7th">7th Grade</option>
+      <option value="8th">8th Grade</option>
+    </select>
+    <input id="searchInput" type="text" onkeyup="searchStudents()" placeholder="Search students..." style="padding: 0.6rem 1rem; font-size: 1rem; width: 250px; border-radius: 10px; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+  </div>
+  <h1 style="color: var(--text-color);">Cottage School Student Database</h1>
+
+  <div class="grade-section">
+    <h2>Add a New Student</h2>
+    <form id="addStudentForm" onsubmit="addStudent(event)" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <input type="text" id="newName" placeholder="Name" required style="padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="email" id="newEmail" placeholder="Email" required style="padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="text" id="newID" placeholder="ID" required style="padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      <input type="date" id="newBirthdate" placeholder="Birthdate" required style="padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+      <select id="newGrade" required style="padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc;">
+        <option value="6th Grade">6th Grade</option>
+        <option value="7th Grade">7th Grade</option>
+        <option value="8th Grade">8th Grade</option>
+      </select>
+      <button type="submit" style="grid-column: span 2; padding: 0.6rem; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer;">Add Student</button>
+    </form>
+  </div>
+
+  <div class="grade-section">
+    <h2>Staff</h2>
+    <div class="student">
+      <div><span>Name:</span> Michael Graham (Teacher)</div>
+      <div><span>Email:</span> michaelg@staff.cottageschool.org</div>
+      <div><span>Password:</span> Panther.78</div>
+      <div><span>Birthdate:</span> ??? (Old?)</div>
+    </div>
+  </div>
+
+<div class="grade-section">
+    <h2>6th Grade</h2>
+    <div class="student"><div><span>Name:</span> Ben Barlow</div><div><span>Email:</span> bbarlow@student.cottageschool.org</div><div><span>ID:</span> 3058</div><div><span>Birthdate:</span> 4/18/2013</div></div>
+    <div class="student"><div><span>Name:</span> Nicholas Beller</div><div><span>Email:</span> nbeller@student.cottageschool.org</div><div><span>ID:</span> 3056</div><div><span>Birthdate:</span> 10/26/2011</div></div>
+<div class="student"><div><span>Name:</span> Harrison Blake</div><div><span>Email:</span> hblake@student.cottageschool.org</div><div><span>ID:</span> 3044</div><div><span>Birthdate:</span> 3/10/2012</div></div>
+<div class="student"><div><span>Name:</span> Lila Capps</div><div><span>Email:</span> lcapps@student.cottageschool.org</div><div><span>ID:</span> 3020</div><div><span>Birthdate:</span> 6/4/2012</div></div>
+<div class="student"><div><span>Name:</span> Adriana Cartwright</div><div><span>Email:</span> acartwright@student.cottageschool.org</div><div><span>ID:</span> 2968</div><div><span>Birthdate:</span> 3/9/2013</div></div>
+<div class="student"><div><span>Name:</span> Tristan Dyer</div><div><span>Email:</span> tdyer@student.cottageschool.org</div><div><span>ID:</span> 3029</div><div><span>Birthdate:</span> 10/25/2012</div></div>
+<div class="student"><div><span>Name:</span> Aakash Eapen</div><div><span>Email:</span> aeapen@student.cottageschool.org</div><div><span>ID:</span> 2996</div><div><span>Birthdate:</span> 1/27/2012</div></div>
+<div class="student"><div><span>Name:</span> Annabelle Whitfield Ertley</div><div><span>Email:</span> aertley@student.cottageschool.org</div><div><span>ID:</span> 2891</div><div><span>Birthdate:</span> 4/6/2012</div></div>
+<div class="student"><div><span>Name:</span> Emmett Francke</div><div><span>Email:</span> efrancke@student.cottageschool.org</div><div><span>ID:</span> 2957</div><div><span>Birthdate:</span> 4/30/2013</div></div>
+<div class="student"><div><span>Name:</span> Ty or Tyrel James Gomes</div><div><span>Email:</span> tgomes@student.cottageschool.org</div><div><span>ID:</span> 3061</div><div><span>Birthdate:</span> 8/15/2012</div></div>
+<div class="student"><div><span>Name:</span> Mia Houdera</div><div><span>Email:</span> mhoudera@student.cottageschool.org</div><div><span>ID:</span> 3093</div><div><span>Birthdate:</span> 10/27/2012</div></div>
+<div class="student"><div><span>Name:</span> Jansen Jones</div><div><span>Email:</span> jjones2@student.cottageschool.org</div><div><span>ID:</span> 2794</div><div><span>Birthdate:</span> 10/17/2010</div></div>
+<div class="student"><div><span>Name:</span> Benjamin Kokabi</div><div><span>Email:</span> bkokabi@student.cottageschool.org</div><div><span>ID:</span> 3037</div><div><span>Birthdate:</span> 11/26/2011</div></div>
+<div class="student"><div><span>Name:</span> William Lambert</div><div><span>Email:</span> wlambert@student.cottageschool.org</div><div><span>ID:</span> 3084</div><div><span>Birthdate:</span> 5/29/2012</div></div>
+<div class="student"><div><span>Name:</span> Cole McArthur</div><div><span>Email:</span> cmcarthur@student.cottageschool.org</div><div><span>ID:</span> 3021</div><div><span>Birthdate:</span> 6/1/2013</div></div>
+<div class="student"><div><span>Name:</span> Jasper Moulthrop</div><div><span>Email:</span> jmoulthrop@student.cottageschool.org</div><div><span>ID:</span> 3022</div><div><span>Birthdate:</span> 8/23/2012</div></div>
+<div class="student"><div><span>Name:</span> Brett Panos</div><div><span>Email:</span> bpanos@student.cottageschool.org</div><div><span>ID:</span> 3127</div><div><span>Birthdate:</span> 5/3/2012</div></div>
+<div class="student"><div><span>Name:</span> Michael Vincent Parsons</div><div><span>Email:</span> mparsons@student.cottageschool.org</div><div><span>ID:</span> 2914</div><div><span>Birthdate:</span> 1/26/2012</div></div>
+<div class="student"><div><span>Name:</span> Shalev Segal</div><div><span>Email:</span> ssegal@student.cottageschool.org</div><div><span>ID:</span> 3051</div><div><span>Birthdate:</span> 10/25/2012</div></div>
+<div class="student"><div><span>Name:</span> Yaseen Shehata</div><div><span>Email:</span> yshehata@student.cottageschool.org</div><div><span>ID:</span> 3099</div><div><span>Birthdate:</span> 6/21/2012</div></div>
+<div class="student"><div><span>Name:</span> Julien Grey Shelton</div><div><span>Email:</span> jshelton@student.cottageschool.org</div><div><span>ID:</span> 3103</div><div><span>Birthdate:</span> 5/8/2012</div></div>
+<div class="student"><div><span>Name:</span> Benjamin Shuford</div><div><span>Email:</span> bshuford@student.cottageschool.org</div><div><span>ID:</span> 3011</div><div><span>Birthdate:</span> 3/19/2013</div></div>
+<div class="student"><div><span>Name:</span> Janiya Smith</div><div><span>Email:</span> jsmith@student.cottageschool.org</div><div><span>ID:</span> 2950</div><div><span>Birthdate:</span> 9/20/2012</div></div>
+<div class="student"><div><span>Name:</span> Kole Smith</div><div><span>Email:</span> ksmith@student.cottageschool.org</div><div><span>ID:</span> 2899</div><div><span>Birthdate:</span> 11/28/2012</div></div>
+<div class="student"><div><span>Name:</span> Ethan Sunshine</div><div><span>Email:</span> esunshine@student.cottageschool.org</div><div><span>ID:</span> 3016</div><div><span>Birthdate:</span> 6/21/2012</div></div>
+<div class="student"><div><span>Name:</span> Alana Tanenbaum</div><div><span>Email:</span> atanenbaum@student.cottageschoo.org</div><div><span>ID:</span> 2857</div><div><span>Birthdate:</span> 5/25/2012</div></div>
+<div class="student"><div><span>Name:</span> Hudson Taylor</div><div><span>Email:</span> htaylor@student.cottageschool.org</div><div><span>ID:</span> 3101</div><div><span>Birthdate:</span> 1/15/2013</div></div>
+<div class="student"><div><span>Name:</span> Nathan Weiss</div><div><span>Email:</span> nweiss@student.cottageschool.org</div><div><span>ID:</span> 2862</div><div><span>Birthdate:</span> 7/18/2013</div></div>
+<div class="student"><div><span>Name:</span> Gabriel White</div><div><span>Email:</span> gwhite@student.cottageschool.org</div><div><span>ID:</span> 3073</div><div><span>Birthdate:</span> 9/11/2013</div></div>
+<div class="student"><div><span>Name:</span> Shanga White Jr.</div><div><span>Email:</span> swhite@student.cottageschool.org</div><div><span>ID:</span> 3080</div><div><span>Birthdate:</span> 9/18/2011</div></div>
+  </div>
+
+  <div class="grade-section">
+    <h2>7th Grade</h2>
+    <div class="student"><div><span>Name:</span> Conner Armistead</div><div><span>Email:</span> carmistead@student.cottageschool.org</div><div><span>ID:</span> 2855</div><div><span>Birthdate:</span> 2/15/2010</div></div>
+    <div class="student"><div><span>Name:</span> John Peter Daane</div><div><span>Email:</span> jdaane@student.cottageschool.org</div><div><span>ID:</span> 2906</div><div><span>Birthdate:</span> 4/25/2010</div></div>
+<div class="student"><div><span>Name:</span> Avery Doyle</div><div><span>Email:</span> adoyle@student.cottageschool.org</div><div><span>ID:</span> 2842</div><div><span>Birthdate:</span> 7/2/2010</div></div>
+<div class="student"><div><span>Name:</span> Henry Frantz</div><div><span>Email:</span> hfrantz@student.cottageschool.org</div><div><span>ID:</span> 2954</div><div><span>Birthdate:</span> 5/5/2010</div></div>
+<div class="student"><div><span>Name:</span> Graham Frost</div><div><span>Email:</span> gfrost@student.cottageschool.org</div><div><span>ID:</span> 2898</div><div><span>Birthdate:</span> 3/5/2010</div></div>
+<div class="student"><div><span>Name:</span> Jeremiah Jenkins</div><div><span>Email:</span> jjenkins@student.cottageschool.org</div><div><span>ID:</span> 2850</div><div><span>Birthdate:</span> 9/28/2010</div></div>
+<div class="student"><div><span>Name:</span> Liliana Marchena</div><div><span>Email:</span> lmarchena@student.cottageschool.org</div><div><span>ID:</span> 3007</div><div><span>Birthdate:</span> 6/8/2010</div></div>
+<div class="student"><div><span>Name:</span> Erin Mathis</div><div><span>Email:</span> emathis@student.cottageschool.org</div><div><span>ID:</span> 2859</div><div><span>Birthdate:</span> 7/30/2010</div></div>
+<div class="student"><div><span>Name:</span> Jack McClure</div><div><span>Email:</span> jmcclure@student.cottageschool.org</div><div><span>ID:</span> 2941</div><div><span>Birthdate:</span> 5/21/2010</div></div>
+<div class="student"><div><span>Name:</span> Bryn Rapp</div><div><span>Email:</span> brapp@student.cottageschool.org</div><div><span>ID:</span> 2798</div><div><span>Birthdate:</span> 9/13/2010</div></div>
+<div class="student"><div><span>Name:</span> Kinsley Reavis</div><div><span>Email:</span> kreavis@student.cottageschool.org</div><div><span>ID:</span> 3001</div><div><span>Birthdate:</span> 5/27/2010</div></div>
+<div class="student"><div><span>Name:</span> Miles Rooks</div><div><span>Email:</span> mrooks@student.cottageschool.org</div><div><span>ID:</span> 2872</div><div><span>Birthdate:</span> 7/14/2010</div></div>
+<div class="student"><div><span>Name:</span> Rowan Smith</div><div><span>Email:</span> rsmith@student.cottageschool.org</div><div><span>ID:</span> 2852</div><div><span>Birthdate:</span> 4/1/2010</div></div>
+<div class="student"><div><span>Name:</span> Asher Urso</div><div><span>Email:</span> aurso@student.cottageschool.org</div><div><span>ID:</span> 2886</div><div><span>Birthdate:</span> 5/20/2010</div></div>
+  </div>
+
+  <div class="grade-section">
+    <h2>8th Grade</h2>
+    <div class="student"><div><span>Name:</span> Lucas Akers</div><div><span>Email:</span> lakers@student.cottageschool.org</div><div><span>ID:</span> 2780</div><div><span>Birthdate:</span> 3/25/2011</div></div>
+    <div class="student"><div><span>Name:</span> Justin Ancrum</div><div><span>Email:</span> jancrum@student.cottageschool.org</div><div><span>ID:</span> 2712</div><div><span>Birthdate:</span> 3/6/2009</div></div>
+<div class="student"><div><span>Name:</span> Breyson Darden</div><div><span>Email:</span> bdarden@student.cottageschool.org</div><div><span>ID:</span> 2761</div><div><span>Birthdate:</span> 10/9/2009</div></div>
+<div class="student"><div><span>Name:</span> Owen Douglas</div><div><span>Email:</span> odouglas@student.cottageschool.org</div><div><span>ID:</span> 2706</div><div><span>Birthdate:</span> 2/5/2009</div></div>
+<div class="student"><div><span>Name:</span> Luke Fitzgibbon</div><div><span>Email:</span> lfitzgibbon@student.cottageschool.org</div><div><span>ID:</span> 2744</div><div><span>Birthdate:</span> 1/9/2009</div></div>
+<div class="student"><div><span>Name:</span> Sean Jackson</div><div><span>Email:</span> sjackson@student.cottageschool.org</div><div><span>ID:</span> 2703</div><div><span>Birthdate:</span> 6/11/2009</div></div>
+<div class="student"><div><span>Name:</span> Kalani Joseph</div><div><span>Email:</span> kjoseph@student.cottageschool.org</div><div><span>ID:</span> 2817</div><div><span>Birthdate:</span> 9/6/2009</div></div>
+<div class="student"><div><span>Name:</span> Ava Marchena</div><div><span>Email:</span> amarchena@student.cottageschool.org</div><div><span>ID:</span> 2801</div><div><span>Birthdate:</span> 7/2/2009</div></div>
+<div class="student"><div><span>Name:</span> Jacob Pickering</div><div><span>Email:</span> jpickering@student.cottageschool.org</div><div><span>ID:</span> 2722</div><div><span>Birthdate:</span> 6/30/2009</div></div>
+<div class="student"><div><span>Name:</span> Joe Reavis</div><div><span>Email:</span> jreavis@student.cottageschool.org</div><div><span>ID:</span> 2795</div><div><span>Birthdate:</span> 4/25/2009</div></div>
+<div class="student"><div><span>Name:</span> Deshaun Sanders</div><div><span>Email:</span> dsanders@student.cottageschool.org</div><div><span>ID:</span> 2743</div><div><span>Birthdate:</span> 5/22/2009</div></div>
+<div class="student"><div><span>Name:</span> Nolan Schmidt</div><div><span>Email:</span> nschmidt@student.cottageschool.org</div><div><span>ID:</span> 2839</div><div><span>Birthdate:</span> 1/15/2009</div></div>
+<div class="student"><div><span>Name:</span> Caleb Shuford</div><div><span>Email:</span> cshuford@student.cottageschool.org</div><div><span>ID:</span> 2747</div><div><span>Birthdate:</span> 6/24/2009</div></div>
+<div class="student"><div><span>Name:</span> William Stark</div><div><span>Email:</span> wstark@student.cottageschool.org</div><div><span>ID:</span> 2832</div><div><span>Birthdate:</span> 8/20/2009</div></div>
+<div class="student"><div><span>Name:</span> Charlie Tolman</div><div><span>Email:</span> ctolman@student.cottageschool.org</div><div><span>ID:</span> 2787</div><div><span>Birthdate:</span> 3/20/2009</div></div>
+<div class="student"><div><span>Name:</span> Jonah Weiss</div><div><span>Email:</span> jweiss@student.cottageschool.org</div><div><span>ID:</span> 2860</div><div><span>Birthdate:</span> 3/13/2009</div></div>
+  </div>
+
+</body>
+</html>
